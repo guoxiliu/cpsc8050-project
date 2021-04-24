@@ -459,6 +459,33 @@ class MicrofacetReflection : public BxDF {
     const Fresnel *fresnel;
 };
 
+class MultilayerThinFilmReflection : public BxDF {
+  public:
+    // MultilayerThinFilmReflection Public Methods
+    MultilayerThinFilmReflection(const Spectrum &reflection, 
+                        const Float &thickness0, const Float &thickness1, 
+                        const Float &eta0, const Float &eta1,
+                        const int& numLayers)
+        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)),
+          R(reflection), d0(thickness0), d1(thickness1),
+          n0(eta0), n1(eta1),
+          wavelengths{650, 550, 475}, 
+          N(numLayers) {}
+    Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
+    Float computeReflectFactor(Float cosThetaO, Float lambda) const;
+    // Spectrum Sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &u,
+    //                   Float *pdf, BxDFType *sampledType) const;
+    // Float Pdf(const Vector3f &wo, const Vector3f &wi) const;
+    std::string ToString() const;
+
+  private:
+    // MultilayerThinFilmReflection Private Data
+    const Spectrum R;
+    const Float d0, d1, n0, n1;
+    const Float wavelengths[3];
+    const int N;    // the number of thin film layers
+};
+
 class MicrofacetTransmission : public BxDF {
   public:
     // MicrofacetTransmission Public Methods

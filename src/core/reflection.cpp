@@ -40,6 +40,7 @@
 #include "interaction.h"
 #include "stats.h"
 #include <stdarg.h>
+#include <complex.h>
 
 namespace pbrt {
 
@@ -241,6 +242,40 @@ std::string MicrofacetReflection::ToString() const {
     return std::string("[ MicrofacetReflection R: ") + R.ToString() +
            std::string(" distribution: ") + distribution->ToString() +
            std::string(" fresnel: ") + fresnel->ToString() + std::string(" ]");
+}
+
+Float MultilayerThinFilmReflection::computeReflectFactor(Float cosThetaO, Float lambda) const {
+    // Compute _cosThetaT_ using Snell's law
+    Float sinThetaO = std::sqrt(std::max((Float)0, 1 - cosThetaO * cosThetaO));
+    Float sinThetaT = n0 / n1 * sinThetaO;
+
+    // Handle total internal reflection
+    if (sinThetaT >= 1) return 1;
+    Float cosThetaT = std::sqrt(std::max((Float)0, 1 - sinThetaT * sinThetaT));
+
+    Float sigmaA = 4 * Pi * n1 * d1 * cosThetaT / lambda;
+    Float sigmaB = sigmaA + 4 * Pi * d0 * cosThetaO / lambda;
+    Float cosSigmaB = cos(sigmaB);
+
+    if (cosSigmaB <= 0)
+        return 0;
+
+    Float cinterf = 0.5f, m = 6;
+    return (cinterf * pow(cosSigmaB, m));
+}
+
+Spectrum MultilayerThinFilmReflection::f(const Vector3f &wo, const Vector3f &wi) const {
+    Float cosThetaO = AbsCosTheta(wo), cosThetaI = AbsCosTheta(wi);
+    Float reflCoeff[3];
+    for (int i = 0; i < 3; i++) {
+        reflCoeff[i] = computeReflectFactor(cosThetaO, wavelengths[i]);
+    }
+    return R * Spectrum::FromRGB(reflCoeff);
+}
+
+std::string MultilayerThinFilmReflection::ToString() const {
+    return std::string("[ MicrofacetReflection R: ") + R.ToString() +
+           StringPrintf(" N: %d ", N) + std::string(" ]");
 }
 
 Spectrum MicrofacetTransmission::f(const Vector3f &wo,
