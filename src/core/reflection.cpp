@@ -275,7 +275,44 @@ Spectrum MultilayerThinFilmReflection::f(const Vector3f &wo, const Vector3f &wi)
 
 std::string MultilayerThinFilmReflection::ToString() const {
     return std::string("[ MicrofacetReflection R: ") + R.ToString() +
-           StringPrintf(" N: %d ", N) + std::string(" ]");
+           StringPrintf(" N: %d, d_air: %f, d_film: %f,", N, d0, d1) + 
+           StringPrintf(" eta_0: %f, eta_1: %f ", n0, n1) + std::string(" ]");
+}
+
+Spectrum SeparateLamellaeReflection::f(const Vector3f &wo, const Vector3f &wi) const {
+    
+    Float cosThetaO = AbsCosTheta(wo), cosThetaI = AbsCosTheta(wi);
+    Vector3f wh = wi + wo;
+    
+    if (cosThetaI == 0 || cosThetaO == 0) return Spectrum(0.);
+    if (wh.x == 0 && wh.y == 0 && wh.z == 0) return Spectrum(0.);
+
+    Float sinThetaO = SinTheta(wo), sinThetaI = SinTheta(wi);
+    Float u = sinThetaO + sinThetaI;
+    Float v = cosThetaO + cosThetaI;
+
+    // Spectrum F = fresnel->Evaluate(Dot(wi, Faceforward(wh, Vector3f(0,0,1))));
+    
+    int M = 6;
+    Float Pi2 = Pi * Pi;
+
+    Float factor = N / (2.f * Pi2);
+    Float reflCoeff[3];
+    for (int i = 0; i < 3; i++) {
+        Float sinTerm1 = sin(Pi * d * v * M / wavelengths[i]);
+        Float sinTerm2 = sin(Pi * d * v / wavelengths[i]);
+        Float sinTerm3 = sin(Pi * a * u / wavelengths[i]);
+        Float rootTerm = sinTerm1 * sinTerm3 * cosThetaI / (sinTerm2 * (u / wavelengths[i]));
+        reflCoeff[i] = factor * rootTerm * rootTerm;
+    }
+
+    return R * Spectrum::FromRGB(reflCoeff);
+}
+
+std::string SeparateLamellaeReflection::ToString() const {
+    return std::string("[ MicrofacetReflection R: ") + R.ToString() +
+           StringPrintf(" N: %d, d: %f, a: %f,", N, d, a) + 
+           StringPrintf(" eta_0: %f, eta_1: %f ", n0, n1) + std::string(" ]");
 }
 
 Spectrum MicrofacetTransmission::f(const Vector3f &wo,

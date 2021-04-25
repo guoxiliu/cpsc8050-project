@@ -18,7 +18,7 @@ LightSource "distant"  "point from" [ -30 40  100 ]
    "blackbody L" [3000 1.5]
 
 AttributeBegin
-  Material "iridescence"
+  Material "iridescence" "float dFilm" [0.25] "float width" [0.050]
   Shape "sphere" "float radius" 1
 AttributeEnd
 

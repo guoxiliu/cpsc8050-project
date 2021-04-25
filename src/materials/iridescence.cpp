@@ -54,10 +54,13 @@ void IridescenceMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     Spectrum R = Kr->Evaluate(*si).Clamp();
     Float d0 = dAir->Evaluate(*si);
     Float d1 = dFilm->Evaluate(*si);
+    Float a = width->Evaluate(*si);
     Float eta = index->Evaluate(*si);
     if (!R.IsBlack()) {
-        si->bsdf->Add(ARENA_ALLOC(arena, MultilayerThinFilmReflection)
-                        (R, numLayers, d0, d1, 1.f, eta));
+        si->bsdf->Add(ARENA_ALLOC(arena, SeparateLamellaeReflection)
+                        (R, numLayers, d1, a, 1.f, eta));
+        // si->bsdf->Add(ARENA_ALLOC(arena, MultilayerThinFilmReflection)
+        //                 (R, numLayers, d0, d1, 1.f, eta));
     }
 }
 
@@ -65,12 +68,13 @@ IridescenceMaterial *CreateIridescenceMaterial(const TextureParams &mp) {
     std::shared_ptr<Texture<Spectrum>> Kr =
         mp.GetSpectrumTexture("Kr", Spectrum(0.8f));
     int layers = mp.FindInt("numLayers", 10);
-    std::shared_ptr<Texture<Float>> dAir = mp.GetFloatTexture("dAir", 90.f);
-    std::shared_ptr<Texture<Float>> dFilm = mp.GetFloatTexture("dFilm", 90.f);
+    std::shared_ptr<Texture<Float>> dAir = mp.GetFloatTexture("dAir", 0.09f);
+    std::shared_ptr<Texture<Float>> dFilm = mp.GetFloatTexture("dFilm", 0.09f);
+    std::shared_ptr<Texture<Float>> width = mp.GetFloatTexture("width", 0.06f);
     std::shared_ptr<Texture<Float>> index = mp.GetFloatTexture("index", 1.53f);
     std::shared_ptr<Texture<Float>> bumpMap =
         mp.GetFloatTextureOrNull("bumpmap");
-    return new IridescenceMaterial(Kr, layers, dAir, dFilm, index, bumpMap);
+    return new IridescenceMaterial(Kr, layers, dAir, dFilm, width, index, bumpMap);
 }
 
 }  // namespace pbrt
