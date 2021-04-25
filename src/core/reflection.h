@@ -462,10 +462,9 @@ class MicrofacetReflection : public BxDF {
 class MultilayerThinFilmReflection : public BxDF {
   public:
     // MultilayerThinFilmReflection Public Methods
-    MultilayerThinFilmReflection(const Spectrum &reflection, 
+    MultilayerThinFilmReflection(const Spectrum &reflection, const int& numLayers,
                         const Float &thickness0, const Float &thickness1, 
-                        const Float &eta0, const Float &eta1,
-                        const int& numLayers)
+                        const Float &eta0, const Float &eta1)
         : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)),
           R(reflection), d0(thickness0), d1(thickness1),
           n0(eta0), n1(eta1),

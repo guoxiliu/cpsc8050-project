@@ -71,6 +71,7 @@
 #include "materials/fourier.h"
 #include "materials/glass.h"
 #include "materials/hair.h"
+#include "materials/iridescence.h"
 #include "materials/kdsubsurface.h"
 #include "materials/matte.h"
 #include "materials/metal.h"
@@ -541,6 +542,8 @@ std::shared_ptr<Material> MakeMaterial(const std::string &name,
         return nullptr;
     else if (name == "matte")
         material = CreateMatteMaterial(mp);
+    else if (name == "iridescence")
+        material = CreateIridescenceMaterial(mp);
     else if (name == "plastic")
         material = CreatePlasticMaterial(mp);
     else if (name == "translucent")
