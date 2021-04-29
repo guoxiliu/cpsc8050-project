@@ -1,0 +1,60 @@
+# Converted from "butterfly.obj" by obj2pbrt
+# Scene bounds: (-1.723723, -21.361797, 4.384053) - (24.371552, -11.273780, 32.565418) #   old butterfly 12 -15 18 
+
+# body # Scene bounds: (-0.508600, 0.179100, -2.041000) - (2.226100, 1.615700, 3.417200) #  new butterfly 0.43, 0.44, 0.34
+#wings # Scene bounds: (-3.322500, 0.178900, -3.392100) - (3.575100, 2.851100, 3.417200)
+# Name "Cylinder1
+
+
+
+LookAt 1 7 3  # eye   3 4 1 # 1 4 1.5 # 3 7 1.5
+       0.43, 0.44, 0.34 # look at point  .5 .5 0 
+       0 1 0    # up vector
+Camera "perspective" "float fov" 90
+# 90 for buttefly or 45 for sphere
+
+Sampler "halton" "integer pixelsamples"  250
+
+
+
+
+#128
+Integrator "path"
+Film "image" "string filename" "newbutterfly.png"
+     "integer xresolution" [400] "integer yresolution" [400]
+
+WorldBegin
+
+# uniform blue-ish illumination from all directions
+LightSource "infinite" "rgb L" [.4 .45 .5]
+
+# approximate the sun
+LightSource "distant"  "point from" [ -30 40  100 ]
+   "blackbody L" [3000 1.5]
+
+AttributeBegin
+
+  #Material "iridescence" "float dFilm" [0.25] "float width" [0.050]
+  #Shape "plymesh" "string filename" "butterfly.ply" #old butterfly
+   
+  Material "matte" "rgb kd" [0.05 0.05 0.05]
+  Shape "plymesh" "string filename" "butterfly_model2_body.ply" 
+  Material "iridescence" #multilayer thin film 
+  Shape "plymesh" "string filename" "butterfly_model2_wings.ply" 
+  
+  #Shape "sphere" "float radius" 1 "rgb kd" [.1 .1 .9]
+AttributeEnd
+
+#AttributeBegin
+ # Texture "checks" "spectrum" "checkerboard"
+  #       "float uscale" [8] "float vscale" [8]
+   #       "rgb tex1" [.1 .1 .1] "rgb tex2" [.8 .8 .8]
+  #Material "matte" "texture Kd" "checks"
+  #Translate 0 0 -1
+  #Shape "trianglemesh"
+   #  "integer indices" [0 1 2 0 2 3]
+    # "point P" [ -20 -20 0   20 -20 0   20 20 0   -20 20 0 ]
+     #"float st" [ 0 0   1 0    1 1   0 1 ]
+#AttributeEnd
+
+WorldEnd
