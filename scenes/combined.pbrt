@@ -1,0 +1,52 @@
+LookAt 0 0 3.5  # eye
+       0 0 0  # look at point
+       0 1 0    # up vector
+Camera "perspective" "float fov" 45
+
+Sampler "halton" "integer pixelsamples" 8
+Integrator "path"
+Film "image" "string filename" "simple.png"
+     "integer xresolution" [400] "integer yresolution" [400]
+
+WorldBegin
+
+# uniform blue-ish illumination from all directions
+# LightSource "infinite" "rgb L" [.4 .45 .5]
+LightSource "infinite" "rgb L" [0.1 0.1 0.1]
+
+# point light source 
+
+# azimuth angle 0
+LightSource "point"  "point from" [ 0 0 30 ] "rgb I" [3000 3000 3000]
+
+# azimuth angle 30
+# LightSource "point"  "point from" [ 15 0 26 ] "rgb I" [3000 3000 3000]
+
+# azimuth angle 45
+# LightSource "point"  "point from" [ 21 0 21 ] "rgb I" [3000 3000 3000]
+
+# azimuth angle 60
+# LightSource "point"  "point from" [ 26 0 15 ] "rgb I" [3000 3000 3000]
+
+# azimuth angle 75
+
+# LightSource "distant"  "point from" [ 0 0 50 ] "blackbody L" [3000 1.5]
+
+AttributeBegin
+  Material "iridescence"
+  Shape "sphere" "float radius" 1
+AttributeEnd
+
+# AttributeBegin
+#   Texture "checks" "spectrum" "checkerboard"
+#           "float uscale" [8] "float vscale" [8]
+#           "rgb tex1" [.1 .1 .1] "rgb tex2" [.8 .8 .8]
+#   Material "matte" "texture Kd" "checks"
+#   Translate 0 0 -1
+#   Shape "trianglemesh"
+#       "integer indices" [0 1 2 0 2 3]
+#       "point P" [ -20 -20 0   20 -20 0   20 20 0   -20 20 0 ]
+#       "float st" [ 0 0   1 0    1 1   0 1 ]
+# AttributeEnd
+
+WorldEnd

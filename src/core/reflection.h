@@ -489,10 +489,10 @@ class SeparateLamellaeReflection : public BxDF {
   public:
     // SeparateLamellaeReflection Public Methods
     SeparateLamellaeReflection(const Spectrum &reflection, const int& numLayers,
-                        const Float &distance, const Float &width, 
+                        const Float &thickness, const Float &width, 
                         const Float &eta0, const Float &eta1)
         : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)),
-          R(reflection), d(distance), a(width),
+          R(reflection), d(thickness), a(width),
           n0(eta0), n1(eta1),
           wavelengths{0.65, 0.55, 0.475}, 
           N(numLayers) {}
@@ -509,6 +509,31 @@ class SeparateLamellaeReflection : public BxDF {
     const Float d, a, n0, n1;
     const Float wavelengths[3];
     const int N;    // the number of thin film layers
+};
+
+class IridescenceReflection : public BxDF {
+  public:
+    // IridescenceReflection Public Methods
+    IridescenceReflection(const Spectrum &reflection, const int& numLayers,
+                        const Float &thickness0, const Float &thickness1,
+                        const Float &interval, const Float &width, 
+                        const Float &eta0, const Float &eta1)
+        : BxDF(BxDFType(BSDF_REFLECTION | BSDF_GLOSSY)) {
+          multiLayerThinFilm = new MultilayerThinFilmReflection(
+            reflection, numLayers, thickness0, thickness1, eta0, eta1);
+          separateLamellae = new SeparateLamellaeReflection(
+            reflection, numLayers, interval, width, eta0, eta1);
+        }
+    Spectrum f(const Vector3f &wo, const Vector3f &wi) const;
+    // Spectrum Sample_f(const Vector3f &wo, Vector3f *wi, const Point2f &u,
+    //                   Float *pdf, BxDFType *sampledType) const;
+    // Float Pdf(const Vector3f &wo, const Vector3f &wi) const;
+    std::string ToString() const;
+
+  private:
+    // IridescenceReflection Private Data
+    MultilayerThinFilmReflection *multiLayerThinFilm;
+    SeparateLamellaeReflection *separateLamellae;
 };
 
 class MicrofacetTransmission : public BxDF {

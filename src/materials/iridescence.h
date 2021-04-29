@@ -51,11 +51,12 @@ class IridescenceMaterial : public Material {
     IridescenceMaterial(const std::shared_ptr<Texture<Spectrum>> &Kr, const int &numLayers,
                   const std::shared_ptr<Texture<Float>> &dAir,
                   const std::shared_ptr<Texture<Float>> &dFilm,
+                  const std::shared_ptr<Texture<Float>> &interval,
                   const std::shared_ptr<Texture<Float>> &width,
                   const std::shared_ptr<Texture<Float>> &index,
                   const std::shared_ptr<Texture<Float>> &bumpMap)
         : Kr(Kr), numLayers(numLayers), dFilm(dFilm), dAir(dAir),
-        width(width), index(index), bumpMap(bumpMap) {}
+        interval(interval), width(width), index(index), bumpMap(bumpMap) {}
     void ComputeScatteringFunctions(SurfaceInteraction *si, MemoryArena &arena,
                                     TransportMode mode,
                                     bool allowMultipleLobes) const;
@@ -64,7 +65,7 @@ class IridescenceMaterial : public Material {
     // IridescenceMaterial Private Data
     int numLayers;
     std::shared_ptr<Texture<Spectrum>> Kr;
-    std::shared_ptr<Texture<Float>> dFilm, dAir, width, index, bumpMap;
+    std::shared_ptr<Texture<Float>> dFilm, dAir, interval, width, index, bumpMap;
 };
 
 IridescenceMaterial *CreateIridescenceMaterial(const TextureParams &mp);

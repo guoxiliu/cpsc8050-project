@@ -255,7 +255,7 @@ Float MultilayerThinFilmReflection::computeReflectFactor(Float cosThetaO, Float 
 
     Float sigmaA = 4 * Pi * n1 * d1 * cosThetaT / lambda;
     Float sigmaB = sigmaA + 4 * Pi * d0 * cosThetaO / lambda;
-    Float cosSigmaB = cos(sigmaB);
+    Float cosSigmaB = abs(cos(sigmaB));
 
     if (cosSigmaB <= 0)
         return 0;
@@ -274,7 +274,7 @@ Spectrum MultilayerThinFilmReflection::f(const Vector3f &wo, const Vector3f &wi)
 }
 
 std::string MultilayerThinFilmReflection::ToString() const {
-    return std::string("[ MicrofacetReflection R: ") + R.ToString() +
+    return std::string("[ MultilayerThinFilmReflection R: ") + R.ToString() +
            StringPrintf(" N: %d, d_air: %f, d_film: %f,", N, d0, d1) + 
            StringPrintf(" eta_0: %f, eta_1: %f ", n0, n1) + std::string(" ]");
 }
@@ -310,9 +310,21 @@ Spectrum SeparateLamellaeReflection::f(const Vector3f &wo, const Vector3f &wi) c
 }
 
 std::string SeparateLamellaeReflection::ToString() const {
-    return std::string("[ MicrofacetReflection R: ") + R.ToString() +
+    return std::string("[ SeparateLamellaeReflection R: ") + R.ToString() +
            StringPrintf(" N: %d, d: %f, a: %f,", N, d, a) + 
            StringPrintf(" eta_0: %f, eta_1: %f ", n0, n1) + std::string(" ]");
+}
+
+Spectrum IridescenceReflection::f(const Vector3f &wo, const Vector3f &wi) const {
+    Float cosThetaO = AbsCosTheta(wo), sinThetaO = SinTheta(wo);
+    Spectrum multilayerSpec = multiLayerThinFilm->f(wo, wi);
+    Spectrum lamellaSpec = separateLamellae->f(wo, wi);
+    
+    return (multilayerSpec*cosThetaO + lamellaSpec*sinThetaO) / (cosThetaO + sinThetaO);
+}
+
+std::string IridescenceReflection::ToString() const {
+    return std::string("[ IridescenceReflection: ") + std::string(" ]");
 }
 
 Spectrum MicrofacetTransmission::f(const Vector3f &wo,

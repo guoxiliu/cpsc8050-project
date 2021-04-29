@@ -37,12 +37,12 @@ AttributeBegin
   #Material "iridescence" "float dFilm" [0.25] "float width" [0.050]
   #Shape "plymesh" "string filename" "butterfly.ply" #old butterfly
    
-  Material "matte" "rgb kd" [0.05 0.05 0.05]
+  Material "matte" "rgb Kd" [0.05 0.05 0.05]
   Shape "plymesh" "string filename" "butterfly_model2_body.ply" 
   Material "iridescence" #multilayer thin film 
   Shape "plymesh" "string filename" "butterfly_model2_wings.ply" 
   
-  #Shape "sphere" "float radius" 1 "rgb kd" [.1 .1 .9]
+  #Shape "sphere" "float radius" 1 "rgb Kd" [.1 .1 .9]
 AttributeEnd
 
 #AttributeBegin
