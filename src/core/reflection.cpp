@@ -268,7 +268,7 @@ Spectrum MultilayerThinFilmReflection::f(const Vector3f &wo, const Vector3f &wi)
     Float cosThetaO = AbsCosTheta(wo), cosThetaI = AbsCosTheta(wi);
     Float reflCoeff[3];
     for (int i = 0; i < 3; i++) {
-        reflCoeff[i] = computeReflectFactor(cosThetaO, wavelengths[i]);
+        reflCoeff[i] = computeReflectFactor(cosThetaI, wavelengths[i]);
     }
     return R * Spectrum::FromRGB(reflCoeff);
 }
