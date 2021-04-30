@@ -255,7 +255,7 @@ Float MultilayerThinFilmReflection::computeReflectFactor(Float cosThetaO, Float 
 
     Float sigmaA = 4 * Pi * n1 * d1 * cosThetaT / lambda;
     Float sigmaB = sigmaA + 4 * Pi * d0 * cosThetaO / lambda;
-    Float cosSigmaB = abs(cos(sigmaB));
+    Float cosSigmaB = cos(sigmaB);
 
     if (cosSigmaB <= 0)
         return 0;
@@ -320,7 +320,7 @@ Spectrum IridescenceReflection::f(const Vector3f &wo, const Vector3f &wi) const 
     Spectrum multilayerSpec = multiLayerThinFilm->f(wo, wi);
     Spectrum lamellaSpec = separateLamellae->f(wo, wi);
     
-    return (multilayerSpec*cosThetaO + lamellaSpec*sinThetaO) / (cosThetaO + sinThetaO);
+    return (lamellaSpec*cosThetaO + multilayerSpec*sinThetaO) / (cosThetaO + sinThetaO);
 }
 
 std::string IridescenceReflection::ToString() const {

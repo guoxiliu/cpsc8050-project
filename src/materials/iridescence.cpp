@@ -58,12 +58,12 @@ void IridescenceMaterial::ComputeScatteringFunctions(SurfaceInteraction *si,
     Float a = width->Evaluate(*si);
     Float eta = index->Evaluate(*si);
     if (!R.IsBlack()) {
-        // si->bsdf->Add(ARENA_ALLOC(arena, MultilayerThinFilmReflection)
-        //                 (R, numLayers, d0, d1, 1.f, eta));
+        si->bsdf->Add(ARENA_ALLOC(arena, MultilayerThinFilmReflection)
+                        (R, numLayers, d0, d1, 1.f, eta));
         // si->bsdf->Add(ARENA_ALLOC(arena, SeparateLamellaeReflection)
         //                 (R, numLayers, d2, a, 1.f, eta));
-        si->bsdf->Add(ARENA_ALLOC(arena, IridescenceReflection)
-                        (R, numLayers, d0, d1, d2, a, 1.f, eta));
+        // si->bsdf->Add(ARENA_ALLOC(arena, IridescenceReflection)
+        //                 (R, numLayers, d0, d1, d2, a, 1.f, eta));
     }
 }
 
